@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SmartInvoice AI — Stop Writing Invoices. Start Talking.</title>
+<meta name="description" content="AI-powered invoicing for freelancers, agencies, and small businesses. Type what you sold, get a tax-ready invoice in 30 seconds. Free, Bilingual, Built for Kevin O'Leary's Builder Fest." />
+<meta property="og:title" content="SmartInvoice AI" />
+<meta property="og:description" content="Type what you sold, get a tax-ready invoice in 30 seconds." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --accent: #ec4899;
+    --success: #10b981;
+    --bg: #ffffff;
+    --bg-soft: #f8fafc;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+  }
+  body {
+    font-family: 'Inter', 'Noto Sans Bengali', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  /* ===== NAV ===== */
+  nav {
+    position: sticky; top: 0;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 50;
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 800; font-size: 18px;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 16px;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    color: var(--text-2); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+  }
+  .nav-links a:hover { color: var(--primary); }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white; padding: 9px 18px; border-radius: 8px;
+    text-decoration: none; font-weight: 600; font-size: 14px;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+  .nav-cta:hover { transform: translateY(-1px); }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 80px 0 100px;
+    background:
+      radial-gradient(ellipse at top, rgba(99, 102, 241, 0.08), transparent 60%),
+      radial-gradient(ellipse at bottom right, rgba(236, 72, 153, 0.06), transparent 50%);
+    text-align: center;
+    position: relative;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 13px; font-weight: 600;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 68px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
+    max-width: 800px;
+    margin-left: auto; margin-right: auto;
+  }
+  .hero h1 .grad {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p.lead {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 32px;
+  }
+  .hero-cta {
+    display: inline-flex; gap: 12px; align-items: center;
+    margin-bottom: 40px;
+  }
+  .btn-lg {
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all 0.15s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary-lg {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+  }
+  .btn-primary-lg:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(99, 102, 241, 0.5); }
+  .btn-secondary-lg {
+    background: white;
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary-lg:hover { background: var(--bg-soft); }
+
+  /* Hero demo box */
+  .demo {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.15);
+    overflow: hidden;
+    text-align: left;
+  }
+  .demo-bar {
+    background: var(--bg-soft);
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .demo-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .demo-dot.r { background: #ef4444; } .demo-dot.y { background: #f59e0b; } .demo-dot.g { background: #10b981; }
+  .demo-url { color: var(--text-muted); font-size: 12px; margin-left: 12px; font-family: monospace; }
+  .demo-body { padding: 28px; }
+  .demo-input {
+    display: flex; gap: 10px; align-items: center;
+    background: var(--bg-soft);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 6px;
+    margin-bottom: 20px;
+  }
+  .demo-input input {
+    flex: 1; border: none; background: transparent; padding: 12px 14px;
+    font-size: 15px; outline: none; font-family: inherit; color: var(--text);
+  }
+  .demo-input button {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white; border: none; padding: 10px 20px;
+    border-radius: 8px; font-weight: 700; font-size: 13px;
+    cursor: pointer; font-family: inherit;
+  }
+  .demo-output {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .demo-output .key { color: var(--primary); font-weight: 600; }
+  .demo-output .str { color: var(--success); }
+  .demo-output .num { color: var(--accent); font-weight: 600; }
+
+  /* ===== STATS ===== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding: 60px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-size: 40px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+  }
+  .stat-label { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+
+  /* ===== FEATURES ===== */
+  .features { padding: 100px 0; }
+  .section-title {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  .section-title h2 {
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+  .section-title p {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 600px; margin: 0 auto;
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .feature {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    transition: all 0.2s;
+  }
+  .feature:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    border-color: var(--primary-light, #c7d2fe);
+  }
+  .feature-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+    color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .feature h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .feature p { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+
+  /* ===== HOW IT WORKS ===== */
+  .how { padding: 100px 0; background: var(--bg-soft); }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    position: relative;
+  }
+  .step {
+    text-align: center;
+    padding: 32px 24px;
+  }
+  .step-num {
+    width: 64px; height: 64px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 800;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+  }
+  .step h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .step p { color: var(--text-muted); }
+
+  /* ===== PRICING ===== */
+  .pricing { padding: 100px 0; }
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .price-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 28px;
+    text-align: center;
+  }
+  .price-card.featured {
+    border-color: var(--primary);
+    border-width: 2px;
+    box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+    transform: scale(1.05);
+    position: relative;
+  }
+  .price-card.featured::before {
+    content: "Most Popular";
+    position: absolute;
+    top: -12px; left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    font-size: 12px; font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 100px;
+  }
+  .price-name { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+  .price-amount { font-size: 48px; font-weight: 900; margin: 12px 0; }
+  .price-amount small { font-size: 18px; color: var(--text-muted); font-weight: 500; }
+  .price-features { list-style: none; text-align: left; margin: 24px 0; }
+  .price-features li { padding: 8px 0; font-size: 14px; color: var(--text-2); }
+  .price-features li::before { content: "✓"; color: var(--success); font-weight: 700; margin-right: 8px; }
+  .price-btn {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: white;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .price-btn.primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white; border: none;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+
+  /* ===== CTA ===== */
+  .cta {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+    color: white;
+    text-align: center;
+  }
+  .cta h2 { font-size: clamp(32px, 4vw, 48px); font-weight: 800; margin-bottom: 16px; letter-spacing: -1px; }
+  .cta p { font-size: 18px; opacity: 0.9; margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .cta .btn { background: white; color: var(--primary); }
+  .cta .btn:hover { background: #f8fafc; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  footer a { color: var(--primary); text-decoration: none; }
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 900px) {
+    .stats, .feature-grid, .steps, .pricing-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .nav-links { display: none; }
+    .hero-cta { flex-direction: column; }
+    .price-card.featured { transform: none; }
+  }
+  @media (max-width: 600px) {
+    .stats, .feature-grid, .steps, .pricing-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="/" class="logo" style="text-decoration:none; color:inherit;">
+      <div class="logo-icon">S</div>
+      <span>SmartInvoice AI</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://github.com/YOUR-USERNAME/smartinvoice-ai" target="_blank">GitHub</a>
+    </div>
+    <a href="/app" class="nav-cta">Launch App →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="badge">✨ Built for Kevin O'Leary's Builder Fest</div>
+    <h1>Stop writing invoices.<br/><span class="grad">Start talking.</span></h1>
+    <p class="lead">
+      SmartInvoice AI turns what you sold — typed or spoken, in English or Bangla — into a tax-ready, multi-currency invoice in 30 seconds. No templates. No spreadsheets. No friction.
+    </p>
+    <div class="hero-cta">
+      <a href="/app" class="btn-lg btn-primary-lg">🚀 Launch App — Free</a>
+      <a href="#how" class="btn-lg btn-secondary-lg">See how it works ↓</a>
+    </div>
+
+    <!-- Live demo -->
+    <div class="demo">
+      <div class="demo-bar">
+        <span class="demo-dot r"></span>
+        <span class="demo-dot y"></span>
+        <span class="demo-dot g"></span>
+        <span class="demo-url">smartinvoice.ai/ai-generator</span>
+      </div>
+      <div class="demo-body">
+        <div class="demo-input">
+          <input type="text" value="logo design $500, 2 hours consulting at $80/hr, 5% tax, due in 14 days" readonly />
+          <button>✨ Generate</button>
+        </div>
+        <div class="demo-output">
+<span class="key">"line_items"</span>: [
+  { <span class="key">"description"</span>: <span class="str">"Logo design"</span>, <span class="key">"quantity"</span>: <span class="num">1</span>, <span class="key">"unit_price"</span>: <span class="num">500</span> },
+  { <span class="key">"description"</span>: <span class="str">"Consulting"</span>, <span class="key">"quantity"</span>: <span class="num">2</span>, <span class="key">"unit_price"</span>: <span class="num">80</span> }
+],
+<span class="key">"tax_rate"</span>: <span class="num">0.05</span>,  <span class="key">"currency"</span>: <span class="str">"USD"</span>,  <span class="key">"due_days"</span>: <span class="num">14</span>
+
+<span style="color: var(--text-muted);">// Total: $660.00  |  Tax: $31.43  |  Grand Total: $691.43</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section>
+  <div class="container">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">30s</div>
+        <div class="stat-label">Average invoice time</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Currencies supported</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Languages (EN / বাংলা)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">$0</div>
+        <div class="stat-label">Per invoice, forever</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-title">
+      <h2>What SmartInvoice AI does</h2>
+      <p>Built for the way real freelancers and small businesses actually work.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="feature-icon">✨</div>
+        <h3>AI Invoice Generation</h3>
+        <p>Type what you sold in plain English or Bangla. Our AI extracts line items, tax, currency, and due dates automatically.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📸</div>
+        <h3>Receipt OCR + Auto-Categorize</h3>
+        <p>Snap a photo of a receipt. AI reads the vendor, amount, date, items, and tags it to the right expense category.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💱</div>
+        <h3>Multi-Currency, Bilingual</h3>
+        <p>USD, EUR, GBP, BDT, INR, JPY, AUD, CAD. Full Bangla + English UI. Built for the global freelancer.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <h3>Live Dashboard</h3>
+        <p>Revenue, paid, pending, overdue. Month-by-month trend chart. Expense pie chart by category. Always real-time.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📤</div>
+        <h3>Send & Track</h3>
+        <p>One click to send to client. Mark as paid, sent, overdue. PDF export. No more "did they get it?"</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🆓</div>
+        <h3>Free Forever, No Sign-up</h3>
+        <p>No credit card, no email, no login. Open the app and create your first invoice in 30 seconds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="section-title">
+      <h2>Three steps. Thirty seconds.</h2>
+      <p>From idea to invoice.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Describe</h3>
+        <p>Type what you sold: "logo design $500, 2 hrs consulting at $80/hr".</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Generate</h3>
+        <p>AI extracts line items, tax, currency, due date. Edit anything inline.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Send</h3>
+        <p>Save, send to client, track payment. Get paid faster.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-title">
+      <h2>Simple pricing. Honest numbers.</h2>
+      <p>Built for the Builder Fest — free during the contest period.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">Free</div>
+        <div class="price-amount">$0<small>/mo</small></div>
+        <ul class="price-features">
+          <li>Unlimited invoices</li>
+          <li>AI generation (OpenRouter free tier)</li>
+          <li>Multi-currency</li>
+          <li>Bangla + English</li>
+          <li>Receipt OCR (5/day)</li>
+        </ul>
+        <button class="price-btn">Start free</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-name">Pro</div>
+        <div class="price-amount">$9<small>/mo</small></div>
+        <ul class="price-features">
+          <li>Everything in Free</li>
+          <li>Premium AI models</li>
+          <li>Unlimited receipts</li>
+          <li>Custom branding</li>
+          <li>Email reminders</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="price-btn primary">Start 14-day trial</button>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Team</div>
+        <div class="price-amount">$29<small>/mo</small></div>
+        <ul class="price-features">
+          <li>Everything in Pro</li>
+          <li>5 team members</li>
+          <li>Shared clients</li>
+          <li>Multi-business</li>
+          <li>API access</li>
+        </ul>
+        <button class="price-btn">Contact sales</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="container">
+    <h2>Try it right now. No sign-up.</h2>
+    <p>Open the app, type what you sold, get a real invoice in 30 seconds.</p>
+    <a href="/app" class="btn btn-lg">🚀 Launch SmartInvoice AI</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>
+      Built for the <a href="https://emergent.sh/ai-contests/kevin-oleary-emergent-builder-fest" target="_blank">Kevin O'Leary × Emergent Builder Fest</a>.
+      <br/>
+      © 2025 SmartInvoice AI · MIT License · Made with ✨ for freelancers worldwide
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

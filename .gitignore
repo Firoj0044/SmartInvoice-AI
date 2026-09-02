@@ -1,0 +1,38 @@
+# SmartInvoice AI
+# Build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Data (will be regenerated on Render)
+data/
+*.db
+uploads/
+
+# Env (Render uses env vars instead)
+.env
+backend/.env
+
+# Logs
+*.log
+logs/
+
+# Test
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Misc
+*.tmp
+*.bak

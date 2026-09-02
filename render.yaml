@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: smartinvoice-ai
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn backend.app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
+        value: nvidia/nemotron-3-ultra-550b-a55b:free
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    disk:
+      name: smartinvoice-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1

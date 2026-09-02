@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SmartInvoice AI — AI-Powered Invoicing for Freelancers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Bengali:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #818cf8;
+    --accent: #ec4899;
+    --success: #10b981;
+    --success-light: #d1fae5;
+    --warning: #f59e0b;
+    --warning-light: #fef3c7;
+    --danger: #ef4444;
+    --danger-light: #fee2e2;
+    --info: #0ea5e9;
+    --info-light: #dbeafe;
+    --bg: #f8fafc;
+    --bg-elev: #ffffff;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --text: #0f172a;
+    --text-2: #334155;
+    --text-muted: #64748b;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+    --shadow-xl: 0 20px 50px -10px rgba(15, 23, 42, 0.15);
+    --radius: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+  }
+  body {
+    font-family: 'Inter', 'Noto Sans Bengali', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body.bn { font-family: 'Noto Sans Bengali', 'Inter', sans-serif; }
+
+  /* ===== Layout ===== */
+  .app {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ===== Sidebar ===== */
+  .sidebar {
+    background: white;
+    border-right: 1px solid var(--border);
+    padding: 24px 18px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 8px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+  }
+  .logo-text { font-weight: 800; font-size: 17px; line-height: 1.2; }
+  .logo-text small { display: block; font-weight: 500; font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  .nav-section { margin-bottom: 18px; }
+  .nav-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    font-weight: 700;
+    padding: 0 12px 8px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text-2);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+    transition: all 0.15s;
+  }
+  .nav-item:hover { background: var(--border-light); color: var(--text); }
+  .nav-item.active {
+    background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(236,72,153,0.08));
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .nav-item .icon { font-size: 18px; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--danger);
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-weight: 700;
+  }
+
+  .lang-toggle {
+    background: var(--border-light);
+    border-radius: 20px;
+    padding: 4px;
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .lang-toggle button {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: 16px;
+    cursor: pointer;
+    color: var(--text-muted);
+  }
+  .lang-toggle button.active {
+    background: white;
+    color: var(--primary);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ===== Main ===== */
+  .main { padding: 32px 40px; max-width: 1400px; width: 100%; }
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 28px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .page-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+  .page-sub { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+
+  /* ===== Buttons ===== */
+  .btn {
+    padding: 10px 18px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+  }
+  .btn-ghost { background: transparent; color: var(--text-2); }
+  .btn-ghost:hover { background: var(--border-light); }
+  .btn-secondary {
+    background: white;
+    border-color: var(--border);
+    color: var(--text);
+  }
+  .btn-secondary:hover { background: var(--border-light); }
+  .btn-success { background: var(--success); color: white; }
+  .btn-success:hover { background: #059669; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { background: #dc2626; }
+  .btn-warning { background: var(--warning); color: white; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-lg { padding: 14px 24px; font-size: 15px; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* ===== Stats Grid ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--primary);
+  }
+  .stat-card.green::before { background: var(--success); }
+  .stat-card.orange::before { background: var(--warning); }
+  .stat-card.red::before { background: var(--danger); }
+  .stat-card.purple::before { background: var(--accent); }
+  .stat-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    margin-bottom: 12px;
+  }
+  .stat-card.green .stat-icon { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+  .stat-card.orange .stat-icon { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+  .stat-card.red .stat-icon { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+  .stat-card.purple .stat-icon { background: rgba(236, 72, 153, 0.1); color: var(--accent); }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .stat-value { font-size: 26px; font-weight: 800; margin: 6px 0; letter-spacing: -0.5px; }
+  .stat-meta { font-size: 12px; color: var(--text-muted); }
+
+  /* ===== Cards ===== */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .card-title { font-size: 16px; font-weight: 700; }
+  .card-sub { color: var(--text-muted); font-size: 13px; margin-top: 2px; }
+
+  /* ===== Hero / AI Generator ===== */
+  .hero {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+    color: white;
+    border-radius: var(--radius-xl);
+    padding: 40px 36px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -30%; right: -10%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 60%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -50%; left: -20%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 60%);
+    pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 1; }
+  .hero h1 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .hero .hero-sub {
+    opacity: 0.9;
+    margin-bottom: 24px;
+    font-size: 15px;
+    max-width: 600px;
+  }
+  .ai-input-wrap {
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 14px;
+    padding: 6px;
+    display: flex;
+    gap: 8px;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s;
+  }
+  .ai-input-wrap:focus-within {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.5);
+  }
+  .ai-prompt {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 15px;
+    padding: 12px 14px;
+    outline: none;
+    font-family: inherit;
+  }
+  .ai-prompt::placeholder { color: rgba(255,255,255,0.7); }
+  .btn-ai {
+    background: white;
+    color: var(--primary);
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-ai:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  }
+  .btn-ai:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+  .ai-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .ai-chip {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.15s;
+    backdrop-filter: blur(4px);
+  }
+  .ai-chip:hover { background: rgba(255,255,255,0.3); transform: translateY(-1px); }
+
+  /* ===== Receipt Upload ===== */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    text-align: center;
+    background: var(--bg);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.05);
+  }
+  .upload-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+  .upload-text { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .upload-hint { color: var(--text-muted); font-size: 13px; }
+  .upload-zone input { display: none; }
+
+  /* ===== Table ===== */
+  .table-wrap { overflow-x: auto; }
+  .table { width: 100%; border-collapse: collapse; }
+  .table th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+    background: var(--bg);
+  }
+  .table td {
+    padding: 14px;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 14px;
+  }
+  .table tr:hover td { background: var(--bg); }
+  .table tr:last-child td { border-bottom: none; }
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .status-draft { background: var(--border-light); color: var(--text-muted); }
+  .status-sent { background: var(--info-light); color: #1e40af; }
+  .status-paid { background: var(--success-light); color: #065f46; }
+  .status-overdue { background: var(--danger-light); color: #991b1b; }
+
+  /* ===== Modal ===== */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+    padding: 20px;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 32px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+  }
+  .modal.modal-lg { max-width: 880px; }
+  .modal-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .modal-sub { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+  .form-group { margin-bottom: 14px; }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-2);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border 0.15s, box-shadow 0.15s;
+    background: white;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+  .form-textarea { resize: vertical; min-height: 60px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+
+  /* ===== Empty state ===== */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+  .empty-text { font-size: 15px; margin-bottom: 16px; }
+
+  /* ===== Page routing ===== */
+  .page { display: none; animation: fadeIn 0.3s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== Chart container ===== */
+  .chart-wrap { height: 280px; position: relative; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  /* ===== Invoice Preview ===== */
+  .inv-preview {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 36px;
+    box-shadow: var(--shadow-sm);
+  }
+  .inv-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .inv-title { font-size: 32px; font-weight: 900; color: var(--primary); margin-bottom: 4px; letter-spacing: -1px; }
+  .inv-from-to { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .inv-block-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .inv-block-content { font-size: 14px; line-height: 1.7; }
+  .inv-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+  .inv-table th {
+    background: var(--bg);
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+  .inv-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 14px;
+  }
+  .inv-totals { margin-top: 20px; }
+  .inv-totals .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+  .inv-totals .row.total {
+    border-top: 2px solid var(--text);
+    padding-top: 12px;
+    margin-top: 8px;
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  /* ===== Receipt card ===== */
+  .receipt-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+  .receipt-card:hover { box-shadow: var(--shadow-md); border-color: var(--primary-light); }
+  .receipt-thumb {
+    width: 64px; height: 64px;
+    border-radius: 10px;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  .receipt-info { flex: 1; }
+  .receipt-vendor { font-weight: 700; font-size: 15px; }
+  .receipt-meta { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
+  .receipt-amount { font-weight: 800; font-size: 18px; color: var(--text); }
+  .category-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    margin-top: 4px;
+  }
+
+  /* ===== AI badge ===== */
+  .ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* ===== Toast ===== */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--text);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    z-index: 200;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { background: var(--success); }
+  .toast.error { background: var(--danger); }
+
+  /* ===== Mobile ===== */
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; padding: 16px; }
+    .main { padding: 20px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .nav-section { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">S</div>
+      <div class="logo-text">SmartInvoice<small data-i18n="tagline">AI-Powered Billing</small></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-item active" data-page="dashboard"><span class="icon">📊</span> <span data-i18n="dashboard">Dashboard</span></div>
+      <div class="nav-item" data-page="ai"><span class="icon">✨</span> <span data-i18n="ai_gen">AI Generator</span></div>
+      <div class="nav-item" data-page="receipts"><span class="icon">📸</span> <span data-i18n="receipts">Receipts</span></div>
+      <div class="nav-item" data-page="invoices"><span class="icon">📄</span> <span data-i18n="invoices">Invoices</span></div>
+      <div class="nav-item" data-page="clients"><span class="icon">👥</span> <span data-i18n="clients">Clients</span></div>
+    </div>
+    <div class="nav-section" style="margin-top: auto;">
+      <div class="lang-toggle">
+        <button class="active" data-lang="en">EN</button>
+        <button data-lang="bn">বাংলা</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="dashboard">Dashboard</h1>
+          <div class="page-sub" data-i18n="dash_sub">Your billing at a glance</div>
+        </div>
+        <button class="btn btn-primary" onclick="showPage('ai')">✨ <span data-i18n="new_invoice">New Invoice</span></button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-label" data-i18n="total_revenue">Total Revenue</div>
+          <div class="stat-value" id="stat-revenue">$0</div>
+          <div class="stat-meta" id="stat-revenue-meta" data-i18n="all_time">All time</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon">✓</div>
+          <div class="stat-label" data-i18n="paid">Paid</div>
+          <div class="stat-value" id="stat-paid">$0</div>
+          <div class="stat-meta" id="stat-paid-meta">0 invoices</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-label" data-i18n="pending">Pending</div>
+          <div class="stat-value" id="stat-pending">$0</div>
+          <div class="stat-meta" data-i18n="awaiting_payment">Awaiting payment</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon">⚠</div>
+          <div class="stat-label" data-i18n="overdue">Overdue</div>
+          <div class="stat-value" id="stat-overdue">$0</div>
+          <div class="stat-meta" data-i18n="past_due">Past due date</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title" data-i18n="revenue_chart">Revenue Trend</div>
+              <div class="card-sub" data-i18n="last_6_months">Last 6 months</div>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="revenue-chart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title" data-i18n="expense_by_category">Expenses by Category</div>
+              <div class="card-sub" data-i18n="from_receipts">From scanned receipts</div>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="category-chart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title" data-i18n="recent_invoices">Recent Invoices</div>
+            <div class="card-sub" data-i18n="latest_5">Latest 5</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="showPage('invoices')" data-i18n="view_all">View all →</button>
+        </div>
+        <div id="recent-invoices"></div>
+      </div>
+    </div>
+
+    <!-- AI GENERATOR -->
+    <div class="page" id="page-ai">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="ai_gen">AI Invoice Generator</h1>
+          <div class="page-sub" data-i18n="ai_sub">Describe what you sold, get a structured invoice in seconds</div>
+        </div>
+      </div>
+
+      <div class="hero">
+        <div class="hero-content">
+          <h1>✨ <span data-i18n="ai_hero_title">AI-Powered Invoicing</span></h1>
+          <p class="hero-sub" data-i18n="ai_hero_sub">Type naturally: "logo design $300, 2 hours consulting at $50/hr, 5% tax, due in 14 days". Get a tax-ready invoice instantly.</p>
+          <div class="ai-input-wrap">
+            <input type="text" class="ai-prompt" id="ai-prompt"
+                   placeholder="e.g. logo design $500, 2 hours consulting at $80/hr, 5% tax, due in 14 days" />
+            <button class="btn-ai" id="ai-btn" onclick="aiGenerate()">✨ Generate</button>
+          </div>
+          <div class="ai-chips">
+            <div class="ai-chip" onclick="useChip(this)">logo design $500, 3 hours consulting at $80/hr</div>
+            <div class="ai-chip" onclick="useChip(this)">web development $1200, hosting setup $100, VAT 5%</div>
+            <div class="ai-chip" onclick="useChip(this)">লোগো ডিজাইন ৫০০০ টাকা, ২ ঘন্টা পরামর্শ ১৫০০ টাকা</div>
+            <div class="ai-chip" onclick="useChip(this)">translation 500 words at $0.10/word, due 7 days</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="ai-result"></div>
+    </div>
+
+    <!-- RECEIPTS (AI SCAN) -->
+    <div class="page" id="page-receipts">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="receipts">Receipts</h1>
+          <div class="page-sub" data-i18n="receipts_sub">AI scans and auto-categorizes your receipts</div>
+        </div>
+        <button class="btn btn-primary" onclick="document.getElementById('receipt-input').click()">📸 <span data-i18n="scan_receipt">Scan Receipt</span></button>
+        <input type="file" id="receipt-input" accept="image/*" style="display:none" onchange="scanReceipt(this.files[0])" />
+      </div>
+
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('receipt-input').click()">
+          <div class="upload-icon">📸</div>
+          <div class="upload-text" data-i18n="drop_receipt">Drop receipt here or click to upload</div>
+          <div class="upload-hint" data-i18n="ai_will_extract">AI will extract vendor, amount, date, items, and category automatically</div>
+        </div>
+      </div>
+
+      <div id="receipt-result"></div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title" data-i18n="all_receipts">All Receipts</div>
+            <div class="card-sub" data-i18n="scanned_expenses">Scanned expenses</div>
+          </div>
+        </div>
+        <div id="all-receipts"></div>
+      </div>
+    </div>
+
+    <!-- INVOICES -->
+    <div class="page" id="page-invoices">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="invoices">Invoices</h1>
+          <div class="page-sub" data-i18n="invoices_sub">All your invoices</div>
+        </div>
+        <button class="btn btn-primary" onclick="showPage('ai')">+ <span data-i18n="new_invoice">New Invoice</span></button>
+      </div>
+
+      <div class="card">
+        <div id="all-invoices"></div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="page" id="page-clients">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="clients">Clients</h1>
+          <div class="page-sub" data-i18n="clients_sub">Manage your client list</div>
+        </div>
+        <button class="btn btn-primary" onclick="showClientModal()">+ <span data-i18n="add_client">Add Client</span></button>
+      </div>
+
+      <div class="card">
+        <div id="all-clients"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Client Modal -->
+<div class="modal-bg" id="client-modal">
+  <div class="modal">
+    <h2 class="modal-title" data-i18n="add_client">Add Client</h2>
+    <p class="modal-sub" data-i18n="add_client_sub">Add a new client to send invoices to</p>
+    <div class="form-group">
+      <label class="form-label" data-i18n="name">Name *</label>
+      <input class="form-input" id="client-name" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" data-i18n="email">Email</label>
+        <input class="form-input" id="client-email" type="email" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="phone">Phone</label>
+        <input class="form-input" id="client-phone" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="company">Company</label>
+      <input class="form-input" id="client-company" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="address">Address</label>
+      <textarea class="form-textarea" id="client-address" rows="2"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" data-i18n="currency">Currency</label>
+        <select class="form-select" id="client-currency">
+          <option value="USD">USD - US Dollar</option>
+          <option value="EUR">EUR - Euro</option>
+          <option value="GBP">GBP - British Pound</option>
+          <option value="BDT">BDT - Bangladeshi Taka</option>
+          <option value="INR">INR - Indian Rupee</option>
+          <option value="JPY">JPY - Japanese Yen</option>
+          <option value="AUD">AUD - Australian Dollar</option>
+          <option value="CAD">CAD - Canadian Dollar</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="language">Language</label>
+        <select class="form-select" id="client-language">
+          <option value="en">English</option>
+          <option value="bn">বাংলা</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="hideClientModal()" data-i18n="cancel">Cancel</button>
+      <button class="btn btn-primary" onclick="saveClient()" data-i18n="save">Save Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- Invoice Preview Modal -->
+<div class="modal-bg" id="invoice-modal">
+  <div class="modal modal-lg">
+    <div id="invoice-preview-content"></div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="hideInvoiceModal()" data-i18n="close">Close</button>
+      <button class="btn btn-primary" onclick="window.print()">📥 <span data-i18n="download_pdf">Download PDF</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== i18n =====
+const I18N = {
+  en: {
+    tagline: "AI-Powered Billing",
+    dashboard: "Dashboard", dash_sub: "Your billing at a glance",
+    ai_gen: "AI Generator", receipts: "Receipts",
+    invoices: "Invoices", invoices_sub: "All your invoices",
+    clients: "Clients", clients_sub: "Manage your client list",
+    new_invoice: "New Invoice", add_client: "Add Client", add_client_sub: "Add a new client to send invoices to",
+    scan_receipt: "Scan Receipt", drop_receipt: "Drop receipt here or click to upload",
+    ai_will_extract: "AI will extract vendor, amount, date, items, and category automatically",
+    all_receipts: "All Receipts", scanned_expenses: "Scanned expenses",
+    total_revenue: "Total Revenue", all_time: "All time",
+    paid: "Paid", pending: "Pending", overdue: "Overdue",
+    awaiting_payment: "Awaiting payment", past_due: "Past due date",
+    revenue_chart: "Revenue Trend", last_6_months: "Last 6 months",
+    expense_by_category: "Expenses by Category", from_receipts: "From scanned receipts",
+    recent_invoices: "Recent Invoices", latest_5: "Latest 5", view_all: "View all →",
+    receipts_sub: "AI scans and auto-categorizes your receipts",
+    ai_sub: "Describe what you sold, get a structured invoice in seconds",
+    ai_hero_title: "AI-Powered Invoicing",
+    ai_hero_sub: 'Type naturally: "logo design $300, 2 hours consulting at $50/hr, 5% tax, due in 14 days". Get a tax-ready invoice instantly.',
+    ai_thinking: "Thinking...",
+    ai_failed: "AI generation failed. Please try again.",
+    name: "Name", email: "Email", phone: "Phone", company: "Company",
+    address: "Address", currency: "Currency", language: "Language",
+    cancel: "Cancel", save: "Save", save_client: "Save Client",
+    close: "Close", download_pdf: "Download PDF",
+    invoice: "INVOICE", bill_to: "Bill To", from_: "From",
+    description: "Description", qty: "Qty", price: "Price", total: "Total",
+    subtotal: "Subtotal", tax: "Tax", grand_total: "Grand Total",
+    issue_date: "Issue Date", due_date: "Due Date", notes: "Notes",
+    no_invoices: "No invoices yet. Generate your first one!",
+    no_clients: "No clients yet. Add your first one!",
+    no_receipts: "No receipts scanned yet",
+    scan: "Scan", saving: "Saving...", save_invoice: "Save Invoice",
+    sent: "Send to Client", mark_paid: "Mark Paid", delete: "Delete",
+    view: "View", scan_failed: "Receipt scan failed. Try another image.",
+  },
+  bn: {
+    tagline: "এআই-চালিত বিলিং",
+    dashboard: "ড্যাশবোর্ড", dash_sub: "আপনার বিলিং এক নজরে",
+    ai_gen: "এআই জেনারেটর", receipts: "রসিদ",
+    invoices: "চালান", invoices_sub: "আপনার সব চালান",
+    clients: "ক্লায়েন্ট", clients_sub: "ক্লায়েন্ট তালিকা পরিচালনা",
+    new_invoice: "নতুন চালান", add_client: "ক্লায়েন্ট যোগ", add_client_sub: "চালান পাঠানোর জন্য নতুন ক্লায়েন্ট যোগ করুন",
+    scan_receipt: "রসিদ স্ক্যান", drop_receipt: "রসিদ এখানে ড্রপ করুন বা ক্লিক করুন",
+    ai_will_extract: "এআই বিক্রেতা, পরিমাণ, তারিখ, পণ্য এবং ক্যাটাগরি স্বয়ংক্রিয়ভাবে বের করবে",
+    all_receipts: "সব রসিদ", scanned_expenses: "স্ক্যান করা খরচ",
+    total_revenue: "মোট আয়", all_time: "সর্বকালের",
+    paid: "প্রাপ্ত", pending: "বকেয়া", overdue: "মেয়াদোত্তীর্ণ",
+    awaiting_payment: "পেমেন্টের অপেক্ষায়", past_due: "মেয়াদ পেরিয়েছে",
+    revenue_chart: "আয়ের প্রবণতা", last_6_months: "শেষ ৬ মাস",
+    expense_by_category: "ক্যাটাগরি অনুযায়ী খরচ", from_receipts: "স্ক্যান করা রসিদ থেকে",
+    recent_invoices: "সাম্প্রতিক চালান", latest_5: "সর্বশেষ ৫টি", view_all: "সব দেখুন →",
+    receipts_sub: "এআই আপনার রসিদ স্ক্যান ও ক্যাটাগরি করে",
+    ai_sub: "আপনি কী বিক্রি করেছেন বর্ণনা করুন, সেকেন্ডে চালান পান",
+    ai_hero_title: "এআই-চালিত চালান",
+    ai_hero_sub: 'স্বাভাবিক ভাষায় লিখুন: "লোগো ডিজাইন ৩০০ ডলার, ২ ঘন্টা পরামর্শ ৫০ ডলার/ঘন্টায়, ৫% কর"।',
+    ai_thinking: "ভাবছে...",
+    ai_failed: "এআই তৈরি ব্যর্থ। আবার চেষ্টা করুন।",
+    name: "নাম", email: "ইমেইল", phone: "ফোন", company: "কোম্পানি",
+    address: "ঠিকানা", currency: "মুদ্রা", language: "ভাষা",
+    cancel: "বাতিল", save: "সংরক্ষণ", save_client: "ক্লায়েন্ট সংরক্ষণ",
+    close: "বন্ধ", download_pdf: "পিডিএফ ডাউনলোড",
+    invoice: "চালান", bill_to: "প্রাপক", from_: "প্রেরক",
+    description: "বিবরণ", qty: "পরিমাণ", price: "মূল্য", total: "মোট",
+    subtotal: "সাবটোটাল", tax: "কর", grand_total: "সর্বমোট",
+    issue_date: "প্রদানের তারিখ", due_date: "মেয়াদ", notes: "নোট",
+    no_invoices: "এখনো কোনো চালান নেই। আপনার প্রথমটি তৈরি করুন!",
+    no_clients: "এখনো কোনো ক্লায়েন্ট নেই। আপনার প্রথমটি যোগ করুন!",
+    no_receipts: "এখনো কোনো রসিদ স্ক্যান হয়নি",
+    scan: "স্ক্যান", saving: "সংরক্ষণ হচ্ছে...", save_invoice: "চালান সংরক্ষণ",
+    sent: "ক্লায়েন্টকে পাঠান", mark_paid: "প্রাপ্ত হিসেবে চিহ্নিত", delete: "মুছুন",
+    view: "দেখুন", scan_failed: "রসিদ স্ক্যান ব্যর্থ। অন্য ছবি দিয়ে চেষ্টা করুন।",
+  }
+};
+
+let LANG = localStorage.getItem("smartinvoice_lang") || "en";
+let currentInvoice = null;
+let revenueChart = null;
+let categoryChart = null;
+
+function t(key) { return (I18N[LANG] || I18N.en)[key] || key; }
+
+function applyI18n() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.body.classList.toggle("bn", LANG === "bn");
+  document.documentElement.lang = LANG;
+  document.querySelectorAll(".lang-toggle button").forEach(b => {
+    b.classList.toggle("active", b.dataset.lang === LANG);
+  });
+  refreshAll();
+}
+
+document.querySelectorAll(".lang-toggle button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    LANG = btn.dataset.lang;
+    localStorage.setItem("smartinvoice_lang", LANG);
+    applyI18n();
+  });
+});
+
+// ===== Navigation =====
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  const el = document.getElementById(`page-${name}`);
+  if (el) el.classList.add("active");
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.querySelector(`.nav-item[data-page="${name}"]`)?.classList.add("active");
+  if (name === "dashboard") loadDashboard();
+  if (name === "invoices") loadInvoices();
+  if (name === "clients") loadClients();
+  if (name === "receipts") loadReceipts();
+}
+document.querySelectorAll(".nav-item").forEach(item => {
+  item.addEventListener("click", () => showPage(item.dataset.page));
+});
+
+// ===== API =====
+const api = {
+  async get(url) { return (await fetch(`/api${url}`)).json(); },
+  async post(url, body) {
+    return (await fetch(`/api${url}`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body || {}),
+    })).json();
+  },
+  async patch(url, body) {
+    return (await fetch(`/api${url}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body || {}),
+    })).json();
+  },
+  async del(url) { return (await fetch(`/api${url}`, { method: "DELETE" })).json(); },
+};
+
+// ===== Toast =====
+function toast(msg, type = "success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast show " + type;
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+// ===== AI Generate =====
+function useChip(el) {
+  document.getElementById("ai-prompt").value = el.textContent;
+}
+
+async function aiGenerate() {
+  const prompt = document.getElementById("ai-prompt").value.trim();
+  if (!prompt) return;
+  const btn = document.getElementById("ai-btn");
+  const resultDiv = document.getElementById("ai-result");
+  btn.disabled = true;
+  btn.textContent = "⏳ " + t("ai_thinking");
+  resultDiv.innerHTML = "";
+  try {
+    const data = await api.post("/ai/generate-invoice", { prompt, language: LANG });
+    currentInvoice = data;
+    renderAIPreview(data, prompt);
+  } catch (e) {
+    resultDiv.innerHTML = `<div class="card" style="border-color: var(--danger); color: var(--danger);">${t("ai_failed")}: ${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "✨ Generate";
+  }
+}
+
+function renderAIPreview(data, originalPrompt) {
+  const subtotal = (data.line_items || []).reduce((s, i) => s + (i.quantity * i.unit_price), 0);
+  const taxAmount = subtotal * (data.tax_rate || 0);
+  const total = subtotal + taxAmount;
+  const cur = data.currency || "USD";
+  const aiTag = data.ai_generated ? '<span class="ai-badge">✨ AI</span>' : '';
+
+  const itemsHtml = (data.line_items || []).map((item, idx) => `
+    <tr>
+      <td><input class="form-input" value="${escapeHtml(item.description)}" onchange="currentInvoice.line_items[${idx}].description = this.value" /></td>
+      <td><input class="form-input" type="number" value="${item.quantity}" onchange="currentInvoice.line_items[${idx}].quantity = parseFloat(this.value)||0; rerenderPreview()" /></td>
+      <td><input class="form-input" type="number" value="${item.unit_price}" onchange="currentInvoice.line_items[${idx}].unit_price = parseFloat(this.value)||0; rerenderPreview()" /></td>
+      <td style="text-align: right; font-weight: 600;">${formatMoney(item.quantity * item.unit_price, cur)}</td>
+    </tr>
+  `).join("");
+
+  document.getElementById("ai-result").innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">✨ AI Generated Invoice ${aiTag}</div>
+          <div class="card-sub">"${escapeHtml(originalPrompt)}"</div>
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom: 16px;">
+        <div class="form-group">
+          <label class="form-label">${t("currency")}</label>
+          <select class="form-select" id="ai-currency" onchange="currentInvoice.currency = this.value; rerenderPreview()">
+            ${["USD","EUR","GBP","BDT","INR","JPY","AUD","CAD"].map(c => `<option ${c === cur ? "selected" : ""} value="${c}">${c}</option>`).join("")}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">${t("tax")} (%)</label>
+          <input class="form-input" id="ai-tax" type="number" step="0.01" value="${((data.tax_rate || 0) * 100).toFixed(2)}" onchange="currentInvoice.tax_rate = parseFloat(this.value)/100 || 0; rerenderPreview()" />
+        </div>
+      </div>
+      <table class="inv-table">
+        <thead><tr><th>${t("description")}</th><th style="width: 90px;">${t("qty")}</th><th style="width: 110px;">${t("price")}</th><th style="text-align: right;">${t("total")}</th></tr></thead>
+        <tbody>${itemsHtml}</tbody>
+      </table>
+      <button class="btn btn-ghost btn-sm" onclick="addLineItem()">+ Add line</button>
+      <div class="inv-totals" style="max-width: 360px; margin-left: auto; margin-top: 20px;">
+        <div class="row"><span>${t("subtotal")}</span><span id="ai-subtotal">${formatMoney(subtotal, cur)}</span></div>
+        <div class="row"><span>${t("tax")} (${((data.tax_rate || 0)*100).toFixed(1)}%)</span><span id="ai-tax-amount">${formatMoney(taxAmount, cur)}</span></div>
+        <div class="row total"><span>${t("grand_total")}</span><span id="ai-total">${formatMoney(total, cur)}</span></div>
+      </div>
+      <div class="form-group" style="margin-top: 20px;">
+        <label class="form-label">${t("notes")}</label>
+        <textarea class="form-textarea" onchange="currentInvoice.notes = this.value">${escapeHtml(data.notes || "")}</textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-success" onclick="saveGeneratedInvoice()">💾 ${t("save_invoice")}</button>
+      </div>
+    </div>
+  `;
+}
+
+function rerenderPreview() {
+  const data = currentInvoice;
+  const subtotal = (data.line_items || []).reduce((s, i) => s + (i.quantity * i.unit_price), 0);
+  const taxAmount = subtotal * (data.tax_rate || 0);
+  const total = subtotal + taxAmount;
+  const cur = data.currency || "USD";
+  document.getElementById("ai-subtotal").textContent = formatMoney(subtotal, cur);
+  document.getElementById("ai-tax-amount").textContent = formatMoney(taxAmount, cur);
+  document.getElementById("ai-total").textContent = formatMoney(total, cur);
+}
+
+function addLineItem() {
+  currentInvoice.line_items.push({ description: "New item", quantity: 1, unit_price: 0 });
+  renderAIPreview(currentInvoice, "(added line item)");
+}
+
+async function saveGeneratedInvoice() {
+  const data = currentInvoice;
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = "⏳ " + t("saving");
+  const res = await api.post("/invoices", {
+    line_items: data.line_items,
+    tax_rate: data.tax_rate,
+    currency: data.currency,
+    due_days: data.due_days || 30,
+    notes: data.notes,
+    language: LANG,
+    status: "draft",
+  });
+  btn.disabled = false;
+  btn.textContent = "💾 " + t("save_invoice");
+  if (res.ok) {
+    toast("✅ " + t("invoice") + " " + (res.id || ""));
+    showPage("invoices");
+  } else {
+    toast("❌ " + JSON.stringify(res), "error");
+  }
+}
+
+// ===== Receipt Scan =====
+function scanReceipt(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const resultDiv = document.getElementById("receipt-result");
+    resultDiv.innerHTML = `<div class="card"><div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">${t("ai_thinking")}</div></div></div>`;
+    const data = await api.post("/ai/scan-receipt", {
+      image: e.target.result,
+      mime_type: file.type,
+      language: LANG,
+    });
+    renderScanResult(data);
+    loadReceipts();
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderScanResult(data) {
+  const aiTag = data.ai_generated ? '<span class="ai-badge">✨ AI</span>' : '';
+  const itemsHtml = (data.items || []).map(item => `
+    <tr><td>${escapeHtml(item.description || "")}</td><td>${item.quantity || 1}</td><td style="text-align: right;">${formatMoney(item.unit_price || 0, data.currency || "USD")}</td></tr>
+  `).join("");
+
+  document.getElementById("receipt-result").innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">📸 Scanned Receipt ${aiTag}</div>
+          <div class="card-sub">${escapeHtml(data.raw_text || "")}</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('receipt-result').innerHTML = ''">✕</button>
+      </div>
+      <div class="stats-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr; margin-bottom: 16px;">
+        <div class="stat-card">
+          <div class="stat-label">Vendor</div>
+          <div style="font-size: 18px; font-weight: 700; margin-top: 6px;">${escapeHtml(data.vendor || "—")}</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Amount</div>
+          <div style="font-size: 22px; font-weight: 800; margin-top: 6px;">${formatMoney(data.amount || 0, data.currency || "USD")}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Date</div>
+          <div style="font-size: 18px; font-weight: 700; margin-top: 6px;">${data.date || "—"}</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-label">Category</div>
+          <div style="font-size: 16px; font-weight: 700; margin-top: 6px;">${escapeHtml(data.category || "Other")}</div>
+        </div>
+      </div>
+      ${data.items && data.items.length ? `
+        <div class="card-title" style="margin-top: 16px; margin-bottom: 8px;">Items</div>
+        <table class="table">
+          <thead><tr><th>${t("description")}</th><th>${t("qty")}</th><th style="text-align: right;">${t("price")}</th></tr></thead>
+          <tbody>${itemsHtml}</tbody>
+        </table>
+      ` : ""}
+    </div>
+  `;
+}
+
+async function loadReceipts() {
+  const receipts = await api.get("/receipts");
+  const div = document.getElementById("all-receipts");
+  if (!receipts.length) {
+    div.innerHTML = `<div class="empty"><div class="empty-icon">📸</div><div class="empty-text">${t("no_receipts")}</div></div>`;
+    return;
+  }
+  div.innerHTML = receipts.map(r => `
+    <div class="receipt-card">
+      <div class="receipt-thumb">🧾</div>
+      <div class="receipt-info">
+        <div class="receipt-vendor">${escapeHtml(r.vendor || "—")}</div>
+        <div class="receipt-meta">${r.date || "—"}</div>
+        <span class="category-pill">${escapeHtml(r.category || "Other")}</span>
+      </div>
+      <div class="receipt-amount">${formatMoney(r.amount || 0, r.currency || "USD")}</div>
+      <button class="btn btn-ghost btn-sm" onclick="deleteReceipt('${r.id}')">🗑</button>
+    </div>
+  `).join("");
+}
+
+async function deleteReceipt(rid) {
+  if (confirm("Delete this receipt?")) {
+    await api.del(`/receipts/${rid}`);
+    loadReceipts();
+    loadDashboard();
+  }
+}
+
+// ===== Dashboard =====
+async function loadDashboard() {
+  const a = await api.get("/analytics");
+  const cur = "USD";
+  document.getElementById("stat-revenue").textContent = formatMoney(a.total_revenue, cur);
+  document.getElementById("stat-paid").textContent = formatMoney(a.paid, cur);
+  document.getElementById("stat-pending").textContent = formatMoney(a.pending, cur);
+  document.getElementById("stat-overdue").textContent = formatMoney(a.overdue, cur);
+  document.getElementById("stat-paid-meta").textContent = `${(a.by_status.paid || 0)} ${t("invoices").toLowerCase()}`;
+  document.getElementById("stat-revenue-meta").textContent = `${a.invoice_count} ${t("invoices").toLowerCase()}`;
+
+  // Charts
+  const labels = Object.keys(a.by_month);
+  const values = Object.values(a.by_month);
+  if (labels.length === 0) {
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      labels.push(d.toISOString().slice(0, 7));
+      values.push(0);
+    }
+  }
+  const ctx = document.getElementById("revenue-chart").getContext("2d");
+  if (revenueChart) revenueChart.destroy();
+  revenueChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: t("total_revenue"),
+        data: values,
+        borderColor: "#6366f1",
+        backgroundColor: "rgba(99, 102, 241, 0.1)",
+        fill: true,
+        tension: 0.4,
+        borderWidth: 3,
+        pointRadius: 5,
+        pointBackgroundColor: "#6366f1",
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: "#f1f5f9" } },
+        x: { grid: { display: false } },
+      },
+    },
+  });
+
+  // Category pie chart
+  const catLabels = Object.keys(a.by_category);
+  const catValues = Object.values(a.by_category);
+  const catColors = ["#6366f1","#ec4899","#10b981","#f59e0b","#0ea5e9","#8b5cf6","#ef4444","#84cc16","#06b6d4","#a855f7"];
+  const cctx = document.getElementById("category-chart").getContext("2d");
+  if (categoryChart) categoryChart.destroy();
+  if (catLabels.length === 0) {
+    document.getElementById("category-chart").parentElement.innerHTML = `<div class="empty" style="padding: 40px;"><div class="empty-icon">📊</div><div class="empty-text">No expenses yet</div></div>`;
+  } else {
+    categoryChart = new Chart(cctx, {
+      type: "doughnut",
+      data: {
+        labels: catLabels,
+        datasets: [{ data: catValues, backgroundColor: catColors, borderWidth: 0 }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: "right", labels: { font: { size: 11 }, boxWidth: 12 } } },
+        cutout: "65%",
+      },
+    });
+  }
+
+  // Recent invoices
+  const invoices = await api.get("/invoices");
+  const recent = invoices.slice(0, 5);
+  const recentDiv = document.getElementById("recent-invoices");
+  if (!recent.length) {
+    recentDiv.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">${t("no_invoices")}</div><button class="btn btn-primary" onclick="showPage('ai')">+ ${t("new_invoice")}</button></div>`;
+    return;
+  }
+  recentDiv.innerHTML = `
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr>
+          <th>${t("invoice")} #</th><th>${t("clients")}</th><th>${t("total")}</th><th>${t("due_date")}</th><th>Status</th><th></th>
+        </tr></thead>
+        <tbody>${recent.map(invRow).join("")}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ===== Invoices =====
+async function loadInvoices() {
+  const invoices = await api.get("/invoices");
+  const div = document.getElementById("all-invoices");
+  if (!invoices.length) {
+    div.innerHTML = `<div class="empty"><div class="empty-icon">📄</div><div class="empty-text">${t("no_invoices")}</div><button class="btn btn-primary" onclick="showPage('ai')">+ ${t("new_invoice")}</button></div>`;
+    return;
+  }
+  div.innerHTML = `
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr>
+          <th>${t("invoice")} #</th><th>${t("clients")}</th><th>${t("total")}</th><th>${t("issue_date")}</th><th>${t("due_date")}</th><th>Status</th><th></th>
+        </tr></thead>
+        <tbody>${invoices.map(invRow).join("")}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function invRow(inv) {
+  return `
+    <tr>
+      <td><strong>${inv.invoice_number || inv.id}</strong></td>
+      <td>${escapeHtml(inv.client_name || "—")}</td>
+      <td><strong>${formatMoney(inv.total, inv.currency)}</strong></td>
+      <td>${inv.issue_date || "—"}</td>
+      <td>${inv.due_date || "—"}</td>
+      <td><span class="status-badge status-${inv.status}">${inv.status}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="viewInvoice('${inv.id}')" title="${t('view')}">👁</button>
+        ${inv.status === "draft" ? `<button class="btn btn-secondary btn-sm" onclick="sendInvoice('${inv.id}')" title="${t('sent')}">📤</button>` : ""}
+        ${inv.status !== "paid" ? `<button class="btn btn-success btn-sm" onclick="markPaid('${inv.id}')" title="${t('mark_paid')}">✓</button>` : ""}
+        <button class="btn btn-ghost btn-sm" onclick="deleteInvoice('${inv.id}')" title="${t('delete')}">🗑</button>
+      </td>
+    </tr>
+  `;
+}
+
+async function viewInvoice(iid) {
+  const inv = (await api.get("/invoices")).find(i => i.id === iid);
+  if (!inv) return;
+  const subtotal = (inv.line_items || []).reduce((s, i) => s + (i.quantity * i.unit_price), 0);
+  const itemsHtml = (inv.line_items || []).map(item => `
+    <tr>
+      <td>${escapeHtml(item.description || "")}</td>
+      <td style="text-align: right;">${item.quantity}</td>
+      <td style="text-align: right;">${formatMoney(item.unit_price, inv.currency)}</td>
+      <td style="text-align: right; font-weight: 600;">${formatMoney(item.quantity * item.unit_price, inv.currency)}</td>
+    </tr>
+  `).join("");
+
+  document.getElementById("invoice-preview-content").innerHTML = `
+    <div class="inv-preview">
+      <div class="inv-header">
+        <div>
+          <div class="inv-title">${t("invoice")}</div>
+          <div style="color: var(--text-muted); font-size: 14px; font-family: 'JetBrains Mono', monospace;">#${inv.invoice_number}</div>
+        </div>
+        <div style="text-align: right; font-size: 14px;">
+          <div><strong>${t("issue_date")}:</strong> ${inv.issue_date}</div>
+          <div><strong>${t("due_date")}:</strong> ${inv.due_date}</div>
+          <div style="margin-top: 8px;"><span class="status-badge status-${inv.status}">${inv.status}</span></div>
+        </div>
+      </div>
+      <div class="inv-from-to">
+        <div>
+          <div class="inv-block-label">${t("bill_to")}</div>
+          <div class="inv-block-content">
+            <strong>${escapeHtml(inv.client_name || "—")}</strong><br>
+            ${inv.client_email || ""}<br>
+            ${inv.client_company || ""}
+          </div>
+        </div>
+      </div>
+      <table class="inv-table">
+        <thead><tr><th>${t("description")}</th><th style="text-align: right; width: 80px;">${t("qty")}</th><th style="text-align: right; width: 100px;">${t("price")}</th><th style="text-align: right; width: 120px;">${t("total")}</th></tr></thead>
+        <tbody>${itemsHtml}</tbody>
+      </table>
+      <div class="inv-totals" style="max-width: 320px; margin-left: auto;">
+        <div class="row"><span>${t("subtotal")}</span><span>${formatMoney(subtotal, inv.currency)}</span></div>
+        <div class="row"><span>${t("tax")} (${((inv.tax_rate || 0)*100).toFixed(1)}%)</span><span>${formatMoney(inv.tax_amount, inv.currency)}</span></div>
+        <div class="row total"><span>${t("grand_total")}</span><span>${formatMoney(inv.total, inv.currency)}</span></div>
+      </div>
+      ${inv.notes ? `<div style="margin-top: 20px; padding: 14px; background: var(--bg); border-radius: 10px; font-size: 13px; line-height: 1.6;">${escapeHtml(inv.notes)}</div>` : ""}
+    </div>
+  `;
+  document.getElementById("invoice-modal").classList.add("show");
+}
+
+function hideInvoiceModal() { document.getElementById("invoice-modal").classList.remove("show"); }
+
+async function markPaid(iid) {
+  await api.patch(`/invoices/${iid}/status`, { status: "paid" });
+  toast("✅ Marked as paid");
+  loadInvoices();
+}
+
+async function sendInvoice(iid) {
+  const res = await api.post(`/invoices/${iid}/send`, {});
+  if (res.ok) toast("📤 " + (res.message || "Invoice sent"));
+  loadInvoices();
+}
+
+async function deleteInvoice(iid) {
+  if (confirm("Delete this invoice?")) {
+    await api.del(`/invoices/${iid}`);
+    loadInvoices();
+  }
+}
+
+// ===== Clients =====
+function showClientModal() { document.getElementById("client-modal").classList.add("show"); }
+function hideClientModal() { document.getElementById("client-modal").classList.remove("show"); }
+
+async function saveClient() {
+  const data = {
+    name: document.getElementById("client-name").value,
+    email: document.getElementById("client-email").value,
+    phone: document.getElementById("client-phone").value,
+    company: document.getElementById("client-company").value,
+    address: document.getElementById("client-address").value,
+    currency: document.getElementById("client-currency").value,
+    language: document.getElementById("client-language").value,
+  };
+  if (!data.name) { toast("Name required", "error"); return; }
+  await api.post("/clients", data);
+  hideClientModal();
+  toast("✅ Client added");
+  loadClients();
+}
+
+async function loadClients() {
+  const clients = await api.get("/clients");
+  const div = document.getElementById("all-clients");
+  if (!clients.length) {
+    div.innerHTML = `<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">${t("no_clients")}</div><button class="btn btn-primary" onclick="showClientModal()">+ ${t("add_client")}</button></div>`;
+    return;
+  }
+  div.innerHTML = `
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr>
+          <th>${t("name")}</th><th>${t("email")}</th><th>${t("company")}</th><th>${t("phone")}</th><th>${t("currency")}</th><th></th>
+        </tr></thead>
+        <tbody>${clients.map(c => `
+          <tr>
+            <td><strong>${escapeHtml(c.name)}</strong></td>
+            <td>${escapeHtml(c.email || "—")}</td>
+            <td>${escapeHtml(c.company || "—")}</td>
+            <td>${escapeHtml(c.phone || "—")}</td>
+            <td>${c.currency}</td>
+            <td><button class="btn btn-ghost btn-sm" onclick="deleteClient('${c.id}')">🗑</button></td>
+          </tr>
+        `).join("")}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function deleteClient(cid) {
+  if (confirm("Delete this client?")) {
+    await api.del(`/clients/${cid}`);
+    loadClients();
+  }
+}
+
+// ===== Helpers =====
+const CURRENCY_SYMBOLS = { USD: "$", EUR: "€", GBP: "£", BDT: "৳", INR: "₹", JPY: "¥", AUD: "A$", CAD: "C$" };
+function formatMoney(amount, currency = "USD") {
+  const sym = CURRENCY_SYMBOLS[currency] || currency + " ";
+  return sym + (Number(amount) || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function escapeHtml(s) {
+  if (s == null) return "";
+  return String(s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function refreshAll() {
+  const active = document.querySelector(".page.active")?.id;
+  if (active === "page-dashboard") loadDashboard();
+  if (active === "page-invoices") loadInvoices();
+  if (active === "page-clients") loadClients();
+  if (active === "page-receipts") loadReceipts();
+}
+
+// Drag-and-drop for upload zone
+const uploadZone = document.getElementById("upload-zone");
+if (uploadZone) {
+  ["dragover", "dragenter"].forEach(e => uploadZone.addEventListener(e, ev => {
+    ev.preventDefault(); uploadZone.classList.add("dragover");
+  }));
+  ["dragleave", "drop"].forEach(e => uploadZone.addEventListener(e, () => uploadZone.classList.remove("dragover")));
+  uploadZone.addEventListener("drop", e => {
+    e.preventDefault();
+    if (e.dataTransfer.files.length) scanReceipt(e.dataTransfer.files[0]);
+  });
+}
+
+// Init
+applyI18n();
+loadDashboard();
+
+// Allow Enter to submit AI prompt
+document.getElementById("ai-prompt")?.addEventListener("keydown", e => {
+  if (e.key === "Enter") aiGenerate();
+});
+</script>
+</body>
+</html>
