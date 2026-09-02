@@ -12,7 +12,3 @@ services:
         value: nvidia/nemotron-3-ultra-550b-a55b:free
       - key: PYTHON_VERSION
         value: 3.11.0
-    disk:
-      name: smartinvoice-data
-      mountPath: /opt/render/project/src/data
-      sizeGB: 1
